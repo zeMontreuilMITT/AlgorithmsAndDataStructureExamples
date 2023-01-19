@@ -1,68 +1,68 @@
-﻿Dictionary<string, Queue<DateTime>> Ingredients = new Dictionary<string, Queue<DateTime>>();
+﻿/*1.Entire Alphabet checker
+If the input string does not contain all letters, print a message to the console state which letters are missing. */
 
-bool continueRunning = true;
+// == PROMPT FOR INPUT
+using System.ComponentModel;
+using System.Runtime.InteropServices;
 
-while(continueRunning)
+Console.WriteLine("Please enter a sentence.");
+string userInput = Console.ReadLine();
+
+while(userInput.Length < 3)
 {
-    Console.WriteLine("1. Add or 2. Remove Ingredients");
-    int addOrRemoveInput = Int32.Parse(Console.ReadLine());
+    Console.WriteLine("Please enter at least three characters.");
+    userInput = Console.ReadLine();
+}
 
-    if(addOrRemoveInput == 1)
+char[] alpha = "ABCDEFGHIJKLMNOPQRSTUVWXYZ".ToCharArray();
+
+// check for missing values from a premade list against another list
+// HashSets are essentially Dictionaries with only Keys
+// Dictionaries are like HashSets with extra functionality
+Dictionary<char, bool> charCheck = new Dictionary<char, bool>();
+
+foreach(char c in alpha)
+{
+    charCheck.Add(c, false);
+}
+
+foreach (char c in userInput)
+{
+    if (Char.IsLetter(c))
     {
-        // === ADD INGREDIENTS ===
-        #region
-        Console.WriteLine("Please enter your Ingredient to add, or STOP to end: ");
-        string ingredientName = Console.ReadLine().ToUpper();
-
-        while (ingredientName != "STOP")
-        {
-            while (ingredientName.Length < 3)
-            {
-                Console.WriteLine("Enter a minimum of three characters.");
-                ingredientName = Console.ReadLine().ToUpper();
-            }
-
-            if (!Ingredients.ContainsKey(ingredientName))
-            {
-                Ingredients.Add(ingredientName, new Queue<DateTime>());
-            }
-
-            Ingredients[ingredientName].Enqueue(DateTime.Now);
-
-            Console.WriteLine("Please enter your Ingredient to add: ");
-            ingredientName = Console.ReadLine().ToUpper();
-        }
-        #endregion
-
-    } else if (addOrRemoveInput == 2)
-    {
-        // REMOVE INGREDIENT
-        #region
-        Console.WriteLine("Enter the name of the ingredient you want to remove, or STOP to stop removing items: ");
-        string removeInput = Console.ReadLine().ToUpper();
-
-        while (removeInput != "STOP")
-        {
-            if (!Ingredients.ContainsKey(removeInput))
-            {
-                Console.WriteLine($"No ingredient found with name {removeInput}");
-            }
-            else
-            {
-                DateTime removedDate = Ingredients[removeInput].Dequeue();
-                Console.WriteLine($"Removed {removeInput} with entry date {removedDate.ToString()}");
-            }
-
-            Console.WriteLine("Enter an item name to remove");
-            removeInput = Console.ReadLine().ToUpper();
-        }
-
-        #endregion
-    } else
-    {
-        Console.WriteLine("Invalid choice.");
-
-        Console.WriteLine("1. Add or 2. Remove Ingredients");
-        addOrRemoveInput = Int32.Parse(Console.ReadLine());
+        char normalized = Char.ToUpper(c);
+        charCheck[normalized] = true;
     }
 }
+
+// Does every value in our collection fulfill a certain criteria?
+// assume that every element is what we're looking for until we're proven incorrect
+bool hasAllEnglishCharacters = true;
+List<char> missingChars = new List<char>();
+
+
+// {{A:true}, {B:true}, {C: false}, {D: true}}
+
+foreach(KeyValuePair<char, bool> pair in charCheck)
+{
+    //if(pair.Value == false)
+    if(!pair.Value)
+    {
+        missingChars.Add(pair.Key);
+        hasAllEnglishCharacters = false;
+    }
+}
+
+if (hasAllEnglishCharacters)
+{
+    Console.WriteLine("String contains all characters of the english alphabet.");
+}
+else
+{
+    Console.WriteLine("String is missing characters: ");
+    Console.WriteLine(String.Join(", ", missingChars)); 
+}
+
+
+
+// because all collection values are only iterated over once, our solution is ON (linear)
